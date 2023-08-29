@@ -1,38 +1,11 @@
-// adding product to the page using javaScript
-const products = [
-    {
-        image: 'images/products/athletic-cotton-socks-6-pairs.jpg',
-        name: ' Black and Gray Athletic Cotton Socks - 6 Pairs',
-        rating: {
-            star: 4.5,
-            count: 87
-        },
-        priceCents: 1090,
+import {cart, addToCart} from '../data/Cart.js';
+import {products} from '../data/products.js';
 
-    },
-    {
-        image: 'images/products/intermediate-composite-basketball.jpg',
-        name: '  Intermediate Size Basketball',
-        rating: {
-            star: 4,
-            count: 127
-        },
-        priceCents: 2095
-    },
-    {
-        image: 'images/products/adults-plain-cotton-tshirt-2-pack-teal.jpg',
-        name: 'Adults Plain Cotton T-Shirt - 2 Pack',
-        rating: {
-            star: 4.5,
-            count: 56
-        },
-        priceCents: 799
-    }
-]
+
 let productHTML = ''
 
-let productsLoop = products.forEach((product, index) => {
-    // console.log(product.name, index)
+ products.forEach((product, index) => {
+    //  console.log(product.name, index)
     productHTML += `
             <div class="product-container">
             <div class="product-image-container">
@@ -45,18 +18,18 @@ let productsLoop = products.forEach((product, index) => {
 
             <div class="product-rating-container">
             <img class="product-rating-stars"
-                src="images/ratings/rating-${product.rating.star * 10}.png">
+                src="images/ratings/rating-${product.rating.stars * 10}.png">
             <div class="product-rating-count link-primary">
                 ${product.rating.count}
             </div>
             </div>
 
             <div class="product-price">
-            $${product.priceCents / 100}
+            $${(product.priceCents / 100).toFixed(2)}
             </div>
 
             <div class="product-quantity-container">
-            <select>
+            <select class="js-quantity-selector-${product.id}">
                 <option selected value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
@@ -77,15 +50,66 @@ let productsLoop = products.forEach((product, index) => {
             Added
             </div>
 
-            <button class="add-to-cart-button button-primary">
+            <button class="add-to-cart-button button-primary" data-product-name="${product.name }" data-product-price="$${product.priceCents / 100}" data-product-id="${product.id}">
             Add to Cart
             </button>
         </div>
     
     `
 })
+
+
  const jsProductUpload = document.querySelector('.products-grid')
 
- jsProductUpload.innerHTML = productHTML
+ jsProductUpload.innerHTML = productHTML;
+ 
 
-console.log(jsProductUpload)
+ const addToChartBtn= document.querySelectorAll('.add-to-cart-button');
+
+//  creating the cart
+
+
+
+               /****  adding the total quantity of the products to the page func *****/
+
+    function addTotalQuantity(){
+      //   adding the total quantity of the products to the page
+let totalQuantity = 0;
+cart.forEach((productQuantity)=>{
+    const cartHtml = document.querySelector('.cart-quantity');
+    totalQuantity +=  productQuantity.quantity
+    cartHtml.innerHTML = totalQuantity;
+})
+
+    }
+
+addToChartBtn.forEach((btn,index)=>{
+  btn.onclick=(event)=>{
+    const productPrice =btn.dataset.productPrice;
+   const productName = btn.dataset.productName;
+   const productId = btn.dataset.productId;
+   const quantitySelector = document.querySelectorAll(` .js-quantity-selector-${productId}`)
+
+                  // addToCart
+  addToCart(productPrice,productId,productName);
+
+                  // TotalQuantity
+  addTotalQuantity();
+
+
+  // //  console.log(quantitySelector)
+  //  const message = document.querySelectorAll('.added-to-cart');
+  //  message.forEach((sms)=>{
+  //   // console.log(sms)
+  //   setTimeout(function(){
+  //     sms.style.opacity = 1;
+  //   },100)
+  //   // sms.style.opacity = 1;
+  //  })
+
+  }
+})
+
+
+
+
